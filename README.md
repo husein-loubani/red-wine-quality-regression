@@ -4,6 +4,10 @@
 
 Explanatory OLS regression: identify which physicochemical properties of Portuguese *Vinho Verde* red wines are most strongly associated with perceived quality.
 
+### Interactive Dashboard
+
+- [OLS Regression Dashboard](https://husein-loubani.github.io/red-wine-quality-regression/reports/figures/dashboard_red_wine.html)
+
 ---
 
 ## Project Goal

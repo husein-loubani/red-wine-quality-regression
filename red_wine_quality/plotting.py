@@ -551,3 +551,209 @@ def save_all_figures(
         plt.close(fig)
 
     print(f"\nAll {len(figs)} figures saved to {Path(figures_dir).resolve()}")
+
+
+# ── Interactive Plotly Dashboard ─────────────────────────────────────────────
+
+def dashboard_red_wine(
+    df: pd.DataFrame,
+    coef_df: pd.DataFrame,
+    std_coefs: pd.DataFrame,
+    reduced_model,
+    holdout_actuals,
+    holdout_predictions,
+    holdout_rmse: float,
+    holdout_r2: float,
+    vif_df: pd.DataFrame,
+    *,
+    out_path: str | Path,
+) -> "plotly.graph_objects.Figure":
+    """Interactive dark-themed executive dashboard for Red Wine Quality OLS."""
+    import plotly.graph_objects as go
+    from plotly.subplots import make_subplots
+
+    n_samples = len(df)
+    n_predictors = len(reduced_model.params) - 1
+    train_r2 = reduced_model.rsquared
+    train_adj_r2 = reduced_model.rsquared_adj
+    f_pvalue = reduced_model.f_pvalue
+
+    fig = make_subplots(
+        rows=3, cols=2,
+        row_heights=[0.33, 0.33, 0.34],
+        column_widths=[0.5, 0.5],
+        specs=[
+            [{"type": "xy"}, {"type": "xy"}],
+            [{"type": "xy"}, {"type": "table"}],
+            [{"type": "xy"}, {"type": "xy"}],
+        ],
+        vertical_spacing=0.10,
+        horizontal_spacing=0.08,
+        subplot_titles=[
+            "Standardized Coefficients (Relative Importance)",
+            "OLS Coefficients with Direction",
+            "Actual vs Predicted (Hold-out Set)",
+            "Model Summary",
+            "Residual Distribution",
+            "Variance Inflation Factors (VIF)",
+        ],
+    )
+
+    # ---- Row 1, Col 1: Standardized coefficients ----
+    std_sorted = std_coefs.sort_values("std_coef", key=abs, ascending=True)
+    bar_colors_std = ["#f97316" if v > 0 else "#6366f1" for v in std_sorted["std_coef"]]
+
+    fig.add_trace(
+        go.Bar(
+            y=std_sorted.index,
+            x=std_sorted["std_coef"],
+            orientation="h",
+            marker_color=bar_colors_std,
+            text=[f"{v:+.3f}" for v in std_sorted["std_coef"]],
+            textposition="outside",
+            textfont=dict(size=10),
+            showlegend=False,
+        ),
+        row=1, col=1,
+    )
+    fig.update_xaxes(title_text="Standardized Coefficient", row=1, col=1)
+
+    # ---- Row 1, Col 2: Raw coefficients ----
+    coef_sorted = coef_df.sort_values("coef", key=abs, ascending=True)
+    bar_colors_raw = ["#f97316" if v > 0 else "#6366f1" for v in coef_sorted["coef"]]
+    coef_labels = coef_sorted.index.tolist()
+
+    fig.add_trace(
+        go.Bar(
+            y=coef_labels,
+            x=coef_sorted["coef"],
+            orientation="h",
+            marker_color=bar_colors_raw,
+            text=[f"{v:+.4f}" for v in coef_sorted["coef"]],
+            textposition="outside",
+            textfont=dict(size=10),
+            showlegend=False,
+        ),
+        row=1, col=2,
+    )
+    fig.update_xaxes(title_text="Coefficient (unstandardized)", row=1, col=2)
+
+    # ---- Row 2, Col 1: Actual vs predicted scatter ----
+    fig.add_trace(
+        go.Scatter(
+            x=holdout_actuals,
+            y=holdout_predictions,
+            mode="markers",
+            marker=dict(color="#6366f1", size=6, opacity=0.5),
+            showlegend=False,
+        ),
+        row=2, col=1,
+    )
+    min_val = min(holdout_actuals.min(), holdout_predictions.min())
+    max_val = max(holdout_actuals.max(), holdout_predictions.max())
+    fig.add_trace(
+        go.Scatter(
+            x=[min_val, max_val], y=[min_val, max_val],
+            mode="lines",
+            line=dict(color="#ef4444", dash="dash", width=2),
+            showlegend=False,
+        ),
+        row=2, col=1,
+    )
+    fig.update_xaxes(title_text="Actual Quality", row=2, col=1)
+    fig.update_yaxes(title_text="Predicted Quality", row=2, col=1)
+
+    # ---- Row 2, Col 2: Model summary table ----
+    summary_labels = [
+        "R-squared (train)", "Adj. R-squared (train)",
+        "R-squared (hold-out)", "RMSE (hold-out)",
+        "F-statistic p-value", "Predictors", "Observations",
+    ]
+    summary_values = [
+        f"{train_r2:.4f}", f"{train_adj_r2:.4f}",
+        f"{holdout_r2:.4f}", f"{holdout_rmse:.4f}",
+        f"{f_pvalue:.2e}", str(n_predictors), f"{n_samples:,}",
+    ]
+
+    fig.add_trace(
+        go.Table(
+            header=dict(
+                values=["<b>Metric</b>", "<b>Value</b>"],
+                fill_color="#1e1b4b",
+                font=dict(color="white", size=13),
+                align="center",
+                height=35,
+            ),
+            cells=dict(
+                values=[summary_labels, summary_values],
+                fill_color=[["#2d2a5e"] * len(summary_labels)],
+                font=dict(color="white", size=12),
+                align="center",
+                height=30,
+            ),
+        ),
+        row=2, col=2,
+    )
+
+    # ---- Row 3, Col 1: Residual histogram ----
+    resids = reduced_model.resid
+    fig.add_trace(
+        go.Histogram(
+            x=resids,
+            nbinsx=40,
+            marker_color="#6366f1",
+            opacity=0.8,
+            showlegend=False,
+        ),
+        row=3, col=1,
+    )
+    fig.update_xaxes(title_text="Residual", row=3, col=1)
+    fig.update_yaxes(title_text="Count", row=3, col=1)
+
+    # ---- Row 3, Col 2: VIF bar chart ----
+    vif_sorted = vif_df.sort_values("VIF", ascending=True)
+    vif_colors = ["#ef4444" if v > 5 else "#22c55e" for v in vif_sorted["VIF"]]
+
+    fig.add_trace(
+        go.Bar(
+            y=vif_sorted.index.tolist(),
+            x=vif_sorted["VIF"],
+            orientation="h",
+            marker_color=vif_colors,
+            text=[f"{v:.1f}" for v in vif_sorted["VIF"]],
+            textposition="outside",
+            textfont=dict(size=10),
+            showlegend=False,
+        ),
+        row=3, col=2,
+    )
+    fig.update_xaxes(title_text="VIF", row=3, col=2)
+
+    # ---- Layout ----
+    fig.update_layout(
+        template="plotly_dark",
+        paper_bgcolor="#0f0e1a",
+        plot_bgcolor="#1a1933",
+        font=dict(family="Inter, system-ui, sans-serif", color="#e2e8f0", size=13),
+        title=dict(
+            text=(
+                "<b>Red Wine Quality — OLS Regression Dashboard</b>"
+                f"<br><span style='font-size:13px; color:#94a3b8'>"
+                f"Samples: {n_samples:,} | Predictors: {n_predictors} | "
+                f"Train R\u00b2: {train_r2:.4f} | Hold-out R\u00b2: {holdout_r2:.4f} | "
+                f"RMSE: {holdout_rmse:.4f}</span>"
+            ),
+            font=dict(size=18, color="#c084fc"),
+            x=0.5,
+            xanchor="center",
+        ),
+        height=1100,
+        margin=dict(t=100, b=40, l=60, r=60),
+    )
+
+    for ann in fig.layout.annotations:
+        ann.font = dict(size=14, color="#d8b4fe")
+
+    Path(out_path).parent.mkdir(parents=True, exist_ok=True)
+    fig.write_html(str(out_path), include_plotlyjs=True)
+    return fig
