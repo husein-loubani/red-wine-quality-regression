@@ -1,4 +1,4 @@
-# Data Dictionary — Red Wine Quality
+# Data Dictionary: Red Wine Quality
 
 **Source:** P. Cortez et al. (2009). *Modeling wine preferences by data mining from physicochemical properties.* Decision Support Systems, 47(4), 547-553.
 

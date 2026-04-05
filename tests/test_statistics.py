@@ -156,7 +156,7 @@ class TestCompareSharedCoefficients:
     def test_alcohol_stable(self, full_model, reduced_model):
         result = compare_shared_coefficients(full_model, reduced_model)
         change_pct = abs(result.loc["alcohol", "Change (%)"])
-        assert change_pct < 10, f"Alcohol coefficient changed by {change_pct:.1f}% — possible confounding"
+        assert change_pct < 10, f"Alcohol coefficient changed by {change_pct:.1f}%, possible confounding"
 
     def test_volatile_acidity_stable(self, full_model, reduced_model):
         result = compare_shared_coefficients(full_model, reduced_model)

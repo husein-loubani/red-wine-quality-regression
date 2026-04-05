@@ -213,7 +213,7 @@ def plot_correlation_bar(
                     f"{val:.3f}", va="center", ha=ha, fontsize=8)
         ax.axvline(0, color="black", linewidth=0.8)
         ax.set_xlabel(f"{metric} with {target}")
-        ax.set_title(f"{label} — bivariate correlations with {target}", fontsize=11)
+        ax.set_title(f"{label}: bivariate correlations with{target}", fontsize=11)
         ax.set_yticks(x)
         ax.set_yticklabels(order, fontsize=9)
 
@@ -737,7 +737,7 @@ def dashboard_red_wine(
         font=dict(family="Inter, system-ui, sans-serif", color="#e2e8f0", size=13),
         title=dict(
             text=(
-                "<b>Red Wine Quality — OLS Regression Dashboard</b>"
+                "<b>Red Wine Quality: OLS Regression Dashboard</b>"
                 f"<br><span style='font-size:13px; color:#94a3b8'>"
                 f"Samples: {n_samples:,} | Predictors: {n_predictors} | "
                 f"Train R\u00b2: {train_r2:.4f} | Hold-out R\u00b2: {holdout_r2:.4f} | "

@@ -2,7 +2,7 @@
 data_processing.py
 Data loading, cleaning, feature engineering, and train/test splitting.
 
-Reusable across regression projects — nothing here is specific to a single dataset.
+Reusable across regression projects. Nothing here is specific to a single dataset.
 """
 
 # Standard library
@@ -203,8 +203,8 @@ def analyze_duplicates(df: pd.DataFrame) -> tuple[pd.DataFrame, bool]:
         sig = result[result["Significant"]].index.tolist()
         print(f"Note: {len(sig)} feature(s) differ between groups: {sig}")
         print("Certain profiles are over-represented among duplicates (e.g. common")
-        print("quality scores). Removing exact duplicates is still valid — they carry")
-        print("no new information — but the marginal distributions of these features")
+        print("quality scores). Removing exact duplicates is still valid, they carry")
+        print("no new information, but the marginal distributions of these features")
         print("will shift slightly. This is expected and acceptable.")
 
     return result, safe_to_remove
@@ -249,12 +249,12 @@ def analyze_feature_redundancy(
     # Report
     print(f"Redundancy analysis: {feature}")
     print("-" * 55)
-    print(f"  Test 1 — Correlation with {related_feature}:")
+    print(f"  Test 1, Correlation with {related_feature}:")
     print(f"    Pearson r  = {r_pearson:.3f}")
     print(f"    Spearman ρ = {r_spearman:.3f}")
     if vif_feature is not None:
-        print(f"  Test 2 — VIF: {vif_feature:.2f}")
-    print(f"  Test 3 — Regression p-value (controlling for {related_feature}): {p_feature:.4f}")
+        print(f"  Test 2, VIF: {vif_feature:.2f}")
+    print(f"  Test 3, Regression p-value (controlling for {related_feature}): {p_feature:.4f}")
     print()
 
     drop = p_feature >= 0.05
@@ -262,7 +262,7 @@ def analyze_feature_redundancy(
         print(f"  Verdict: DROP {feature}.")
         print(f"  Non-significant (p={p_feature:.4f}) once {related_feature} is controlled.")
     else:
-        print(f"  Verdict: KEEP {feature} — adds significant information (p={p_feature:.4f}).")
+        print(f"  Verdict: KEEP {feature}, adds significant information (p={p_feature:.4f}).")
 
     return {
         "pearson_r": r_pearson,

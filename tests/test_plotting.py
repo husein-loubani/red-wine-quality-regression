@@ -1,6 +1,6 @@
 """
 test_plotting.py
-Tests for src/plotting.py — verifies each function returns a valid Figure
+Tests for src/plotting.py. Verifies each function returns a valid Figure
 and saves correctly to disk.
 """
 

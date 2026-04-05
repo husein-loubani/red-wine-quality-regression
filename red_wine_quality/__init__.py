@@ -1,7 +1,7 @@
 """
-Red Wine Quality Regression — source package.
+Red Wine Quality Regression: source package.
 
-Public API — import directly from red_wine_quality rather than from submodules:
+Public API. Import directly from red_wine_quality rather than from submodules:
 
     from red_wine_quality import load_data, fit_ols, plot_coefficients
 """
