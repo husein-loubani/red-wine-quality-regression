@@ -3,19 +3,17 @@ test_statistics.py
 Tests for src/statistics.py
 """
 
-import numpy as np
 import pandas as pd
-import pytest
 
+from red_wine_quality.config import ALPHA, FULL_OLS_FORMULA
 from red_wine_quality.statistics import (
-    fit_ols,
     coefficient_table,
-    standardized_coefficients,
-    evaluate_holdout,
     compare_models,
     compare_shared_coefficients,
+    evaluate_holdout,
+    fit_ols,
+    standardized_coefficients,
 )
-from red_wine_quality.config import FULL_OLS_FORMULA, REDUCED_OLS_FORMULA, ALPHA
 
 
 class TestFitOls:

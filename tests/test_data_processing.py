@@ -7,15 +7,14 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from red_wine_quality.config import RANDOM_SEED, SKEW_CANDIDATES
 from red_wine_quality.data_processing import (
-    load_data,
-    assess_data,
-    descriptive_stats,
     add_log_features,
-    split_data,
+    assess_data,
     compute_vif,
+    descriptive_stats,
+    split_data,
 )
-from red_wine_quality.config import SKEW_CANDIDATES, RANDOM_SEED
 
 
 class TestLoadData:

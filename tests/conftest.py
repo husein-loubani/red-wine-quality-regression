@@ -10,12 +10,11 @@ from pathlib import Path
 # Make src importable when running pytest from any directory
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-import numpy as np
 import pandas as pd
 import pytest
 
-from red_wine_quality.data_processing import add_log_features
 from red_wine_quality.config import FULL_OLS_FORMULA, REDUCED_OLS_FORMULA
+from red_wine_quality.data_processing import add_log_features
 
 
 @pytest.fixture(scope="session")

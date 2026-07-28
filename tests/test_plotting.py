@@ -5,34 +5,39 @@ and saves correctly to disk.
 """
 
 import matplotlib
+
 matplotlib.use("Agg")  # non-interactive backend, safe for CI
+
 
 import matplotlib.pyplot as plt
 import pytest
-from pathlib import Path
 
-from red_wine_quality.config import SKEW_CANDIDATES, FULL_PREDICTORS
-from red_wine_quality.data_processing import add_log_features, compute_vif
-from red_wine_quality.statistics import (
-    fit_ols, coefficient_table, standardized_coefficients, evaluate_holdout,
+from red_wine_quality.config import (
+    FULL_PREDICTORS,
+    SKEW_CANDIDATES,
 )
+from red_wine_quality.data_processing import compute_vif
 from red_wine_quality.plotting import (
-    save_figure,
-    plot_target_distribution,
-    plot_univariate_distributions,
-    plot_predictors_vs_target,
+    plot_coefficients,
     plot_correlation_bar,
     plot_correlation_heatmap,
-    plot_log_transform_comparison,
-    plot_vif,
-    plot_coefficients,
-    plot_standardized_coefficients,
-    plot_residual_diagnostics,
     plot_holdout_evaluation,
-    plot_violin_pair,
+    plot_log_transform_comparison,
+    plot_predictors_vs_target,
+    plot_residual_diagnostics,
+    plot_standardized_coefficients,
     plot_stratification_check,
+    plot_target_distribution,
+    plot_univariate_distributions,
+    plot_vif,
+    plot_violin_pair,
+    save_figure,
 )
-from red_wine_quality.config import FULL_OLS_FORMULA, REDUCED_OLS_FORMULA
+from red_wine_quality.statistics import (
+    coefficient_table,
+    evaluate_holdout,
+    standardized_coefficients,
+)
 
 
 @pytest.fixture(scope="module")

@@ -11,20 +11,25 @@ Every function follows the same contract:
 
 # Standard library
 from __future__ import annotations
+
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 # Third-party
 import matplotlib.pyplot as plt
+
+if TYPE_CHECKING:
+    import plotly.graph_objects
 import matplotlib.patches as mpatches
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import statsmodels.api as sm
-from statsmodels.nonparametric.smoothers_lowess import lowess
 from scipy import stats
+from statsmodels.nonparametric.smoothers_lowess import lowess
 
 # Local
-from red_wine_quality.config import ACCENT_COLOR, BLUE_COLOR, PALETTE, FIGURE_DPI
+from red_wine_quality.config import ACCENT_COLOR, BLUE_COLOR, FIGURE_DPI, PALETTE
 
 
 def save_figure(fig: plt.Figure, name: str, figures_dir: str | Path) -> None:
@@ -194,7 +199,6 @@ def plot_correlation_bar(
     spearman = spearman[order]
 
     x = np.arange(len(order))
-    width = 0.38
 
     fig, axes = plt.subplots(1, 2, figsize=(14, 5), sharey=True)
 

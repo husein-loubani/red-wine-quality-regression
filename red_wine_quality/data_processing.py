@@ -7,16 +7,17 @@ Reusable across regression projects. Nothing here is specific to a single datase
 
 # Standard library
 from __future__ import annotations
+
 from pathlib import Path
 
 # Third-party
 import numpy as np
 import pandas as pd
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
 from scipy import stats
 from sklearn.model_selection import train_test_split
 from statsmodels.stats.outliers_influence import variance_inflation_factor
-import statsmodels.api as sm
-import statsmodels.formula.api as smf
 
 # Local
 from red_wine_quality.config import (
